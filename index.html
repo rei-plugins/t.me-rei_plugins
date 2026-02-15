@@ -1,0 +1,1027 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Rei Plugins — Правила</title>
+    <style>
+        :root {
+            /* Coffee Palette */
+            --bg: #1a1614;
+            --surface: #2c2420;
+            --surface-bright: #3a302a;
+            --primary: #dcc6a0;
+            --accent: #c4a484;
+            --on-surface: #f2ebe5;
+            --secondary: #9c8c84;
+            --outline: #4a3e36;
+            
+            /* Additional Colors */
+            --warning: #d4a574;
+            --danger: #c87d6f;
+            --success: #a8c084;
+            
+            /* Размеры */
+            --radius-xl: 24px;
+            --radius-lg: 16px;
+            --radius-md: 12px;
+            --radius-full: 999px;
+            --font-stack: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Inter", sans-serif;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--on-surface);
+            font-family: var(--font-stack);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        /* Navigation */
+        .nav-bar {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 100;
+            opacity: 0;
+            animation: fadeIn 0.5s 0.5s forwards;
+        }
+        
+        @keyframes fadeIn {
+            to { opacity: 1; }
+        }
+        
+        .burger-btn {
+            background: var(--surface);
+            border: 1px solid var(--outline);
+            width: 44px;
+            height: 44px;
+            border-radius: 14px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+        }
+        
+        .burger-btn:active {
+            transform: scale(0.95);
+        }
+        
+        .burger-line {
+            width: 20px;
+            height: 2px;
+            background: var(--primary);
+            border-radius: 2px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .sidebar-open .line1 {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+        
+        .sidebar-open .line2 {
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+        
+        .sidebar-open .line3 {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+        
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 280px;
+            background: var(--surface);
+            border-right: 1px solid var(--outline);
+            padding: 80px 24px;
+            transform: translateX(-100%);
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 90;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            box-shadow: 10px 0 40px rgba(0,0,0,0.6);
+            overflow-y: auto;
+        }
+        
+        .sidebar.active {
+            transform: translateX(0);
+        }
+        
+        .sidebar-header {
+            margin-bottom: 32px;
+            text-align: center;
+        }
+        
+        .sidebar-logo {
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+            letter-spacing: 1px;
+        }
+        
+        .sidebar-subtitle {
+            font-size: 12px;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+        }
+        
+        .menu-section-title {
+            font-size: 11px;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            font-weight: 700;
+            margin: 20px 0 8px 16px;
+        }
+        
+        .menu-item {
+            padding: 14px 16px;
+            border-radius: var(--radius-lg);
+            color: var(--secondary);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 15px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        
+        .menu-item:hover {
+            background: var(--surface-bright);
+            color: var(--on-surface);
+        }
+        
+        .menu-item.active {
+            background: var(--surface-bright);
+            color: var(--primary);
+            border-color: var(--outline);
+        }
+        
+        .menu-item svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+            opacity: 0.8;
+        }
+        
+        .overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 80;
+            opacity: 0;
+            visibility: hidden;
+            transition: 0.3s;
+            backdrop-filter: blur(4px);
+        }
+        
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        /* Main Container */
+        .container {
+            width: 100%;
+            max-width: 680px;
+            margin: 0 auto;
+            padding: 80px 20px 60px;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        
+        .logo {
+            font-size: 42px;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: 2px;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+        
+        .subtitle {
+            font-size: 16px;
+            color: var(--secondary);
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.1s backwards;
+        }
+        
+        .tagline {
+            font-size: 13px;
+            color: var(--secondary);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            opacity: 0.6;
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.2s backwards;
+        }
+        
+        /* Intro Card */
+        .intro-card {
+            background: var(--surface);
+            border: 1px solid var(--outline);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin-bottom: 32px;
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s backwards;
+        }
+        
+        .intro-card h2 {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .intro-card p {
+            font-size: 15px;
+            color: var(--secondary);
+            line-height: 1.7;
+        }
+        
+        /* Section */
+        .section {
+            margin-bottom: 40px;
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) backwards;
+        }
+        
+        .section:nth-child(4) { animation-delay: 0.4s; }
+        .section:nth-child(5) { animation-delay: 0.5s; }
+        .section:nth-child(6) { animation-delay: 0.6s; }
+        .section:nth-child(7) { animation-delay: 0.7s; }
+        
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--outline);
+        }
+        
+        .section-number {
+            font-size: 14px;
+            font-weight: 800;
+            color: var(--primary);
+            background: var(--surface-bright);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--outline);
+        }
+        
+        .section-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--on-surface);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            flex: 1;
+        }
+        
+        .section-icon {
+            font-size: 20px;
+        }
+        
+        /* Rule Card */
+        .rule-card {
+            background: var(--surface);
+            border: 1px solid var(--outline);
+            border-radius: var(--radius-lg);
+            padding: 18px;
+            margin-bottom: 12px;
+            transition: all 0.2s;
+        }
+        
+        .rule-card:hover {
+            background: var(--surface-bright);
+            transform: translateX(4px);
+        }
+        
+        .rule-card:active {
+            transform: translateX(2px) scale(0.99);
+        }
+        
+        .rule-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        
+        .rule-num {
+            font-size: 12px;
+            font-weight: 800;
+            color: var(--bg);
+            background: var(--primary);
+            min-width: 28px;
+            height: 28px;
+            border-radius: var(--radius-full);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+        
+        .rule-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--on-surface);
+            flex: 1;
+        }
+        
+        .rule-badge {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--bg);
+            background: var(--warning);
+            padding: 4px 10px;
+            border-radius: var(--radius-full);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        
+        .rule-content {
+            font-size: 14px;
+            color: var(--secondary);
+            line-height: 1.7;
+            margin-left: 40px;
+        }
+        
+        .rule-slang {
+            margin-top: 10px;
+            padding: 12px 14px;
+            background: var(--surface-bright);
+            border-radius: var(--radius-md);
+            border-left: 3px solid var(--accent);
+            font-size: 13px;
+            color: var(--accent);
+            font-style: italic;
+            line-height: 1.6;
+        }
+        
+        .rule-slang::before {
+            content: '💬 ';
+            opacity: 0.7;
+        }
+        
+        /* Notice Card */
+        .notice-card {
+            background: var(--surface);
+            border: 2px solid var(--danger);
+            border-radius: var(--radius-xl);
+            padding: 24px;
+            margin: 32px 0;
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.8s backwards;
+        }
+        
+        .notice-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .notice-icon {
+            font-size: 24px;
+        }
+        
+        .notice-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--danger);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .notice-content {
+            font-size: 14px;
+            color: var(--secondary);
+            line-height: 1.7;
+        }
+        
+        .notice-content p {
+            margin-bottom: 12px;
+        }
+        
+        .notice-content p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .notice-content strong {
+            color: var(--on-surface);
+            font-weight: 700;
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 48px;
+            padding: 32px 20px;
+            background: var(--surface);
+            border: 1px solid var(--outline);
+            border-radius: var(--radius-xl);
+            animation: slideUpFade 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.9s backwards;
+        }
+        
+        .footer-title {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
+        }
+        
+        .footer-subtitle {
+            font-size: 14px;
+            color: var(--secondary);
+            margin-bottom: 24px;
+        }
+        
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-link {
+            background: var(--surface-bright);
+            border: 1px solid var(--outline);
+            border-radius: var(--radius-full);
+            padding: 10px 20px;
+            text-decoration: none;
+            color: var(--on-surface);
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .footer-link:hover {
+            background: var(--primary);
+            color: var(--bg);
+            transform: translateY(-2px);
+        }
+        
+        .footer-link:active {
+            transform: translateY(0);
+        }
+        
+        .footer-copyright {
+            font-size: 12px;
+            color: var(--secondary);
+            opacity: 0.6;
+            margin-top: 20px;
+        }
+        
+        /* Animations */
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 60px 16px 40px;
+            }
+            
+            .logo {
+                font-size: 32px;
+            }
+            
+            .rule-content {
+                margin-left: 0;
+                margin-top: 10px;
+            }
+            
+            .rule-header {
+                flex-wrap: wrap;
+            }
+            
+            .footer-links {
+                flex-direction: column;
+            }
+        }
+        
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: var(--surface-bright);
+            border-radius: 5px;
+            border: 2px solid var(--bg);
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div class="nav-bar" id="navBar">
+        <div class="burger-btn" onclick="toggleSidebar()">
+            <div class="burger-line line1"></div>
+            <div class="burger-line line2"></div>
+            <div class="burger-line line3"></div>
+        </div>
+    </div>
+    
+    <!-- Sidebar -->
+    <div class="overlay" id="overlay" onclick="closeSidebar()"></div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-logo">REI PLUGINS</div>
+            <div class="sidebar-subtitle">Navigation</div>
+        </div>
+        
+        <div class="menu-section-title">Разделы</div>
+        <a href="#intro" class="menu-item" onclick="scrollToSection('intro')">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/></svg>
+            Введение
+        </a>
+        <a href="#main" class="menu-item" onclick="scrollToSection('main')">
+            <svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>
+            Основные правила
+        </a>
+        <a href="#tech" class="menu-item" onclick="scrollToSection('tech')">
+            <svg viewBox="0 0 24 24"><path d="M22.7 19l-9.1-9.1c.9-2.3.4-5-1.5-6.9-2-2-5-2.4-7.4-1.3L9 6 6 9 1.6 4.7C.4 7.1.9 10.1 2.9 12.1c1.9 1.9 4.6 2.4 6.9 1.5l9.1 9.1c.4.4 1 .4 1.4 0l2.3-2.3c.5-.4.5-1.1.1-1.4z"/></svg>
+            Технические
+        </a>
+        <a href="#culture" class="menu-item" onclick="scrollToSection('culture')">
+            <svg viewBox="0 0 24 24"><path d="M20 2H4c-1.1 0-1.99.9-1.99 2L2 22l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 9h12v2H6V9zm8 5H6v-2h8v2zm4-6H6V6h12v2z"/></svg>
+            Культура общения
+        </a>
+        <a href="#forbidden" class="menu-item" onclick="scrollToSection('forbidden')">
+            <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.42 0-8-3.58-8-8 0-1.85.63-3.55 1.69-4.9L16.9 18.31C15.55 19.37 13.85 20 12 20zm6.31-3.1L7.1 5.69C8.45 4.63 10.15 4 12 4c4.42 0 8 3.58 8 8 0 1.85-.63 3.55-1.69 4.9z"/></svg>
+            Запрещено
+        </a>
+        
+        <div class="menu-section-title">Ссылки</div>
+        <a href="https://t.me/rei_plugins" class="menu-item" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M9.78 18.65l.28-4.23 7.68-6.92c.34-.31-.07-.46-.52-.19L7.74 13.3 3.64 12c-.88-.25-.89-.86.2-1.3l15.97-6.16c.73-.33 1.43.18 1.15 1.3l-2.72 12.81c-.19.91-.74 1.13-1.5.71L12.6 16.3l-1.99 1.93c-.23.23-.42.42-.83.42z"/></svg>
+            Telegram канал
+        </a>
+        <a href="https://github.com/reiplugins" class="menu-item" target="_blank">
+            <svg viewBox="0 0 24 24"><path d="M12 2A10 10 0 0 0 2 12c0 4.42 2.87 8.17 6.84 9.5.5.08.66-.23.66-.5v-1.69c-2.77.6-3.36-1.34-3.36-1.34-.46-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.87 1.52 2.34 1.07 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.92 0-1.11.38-2 1.03-2.71-.1-.25-.45-1.29.1-2.64 0 0 .84-.27 2.75 1.02.79-.22 1.65-.33 2.5-.33.85 0 1.71.11 2.5.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.35.2 2.39.1 2.64.65.71 1.03 1.6 1.03 2.71 0 3.82-2.34 4.66-4.57 4.91.36.31.69.92.69 1.85V21c0 .27.16.59.67.5C19.14 20.16 22 16.42 22 12A10 10 0 0 0 12 2z"/></svg>
+            GitHub
+        </a>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">REI PLUGINS</div>
+            <div class="subtitle">Правила канала и чата</div>
+            <div class="tagline">ExteraGram & AyuGram Ecosystem</div>
+        </div>
+        
+        <!-- Intro -->
+        <div class="intro-card" id="intro">
+            <h2>🏛️ Добро пожаловать</h2>
+            <p>Rei Plugins — профессиональное пространство для разработчиков и энтузиастов кастомных клиентов Telegram. Мы обсуждаем плагины для ExteraGram и AyuGram, делимся опытом и создаём крутые решения. Для поддержания продуктивной атмосферы просим соблюдать правила.</p>
+        </div>
+        
+        <!-- Main Rules -->
+        <div class="section" id="main">
+            <div class="section-header">
+                <span class="section-number">01</span>
+                <h2 class="section-title">Основные правила</h2>
+                <span class="section-icon">📜</span>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">1</span>
+                    <span class="rule-title">Уважение к участникам</span>
+                </div>
+                <div class="rule-content">
+                    Общайтесь с уважением ко всем участникам сообщества. Запрещены оскорбления, токсичность, травля и любые формы дискриминации. Мы за конструктивный диалог и взаимопомощь.
+                    <div class="rule-slang">
+                        Будь человеком, а не токсиком. Тут все свои, помогаем друг другу, а не срачи устраиваем.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">2</span>
+                    <span class="rule-title">Контент строго по теме</span>
+                    <span class="rule-badge">Важно</span>
+                </div>
+                <div class="rule-content">
+                    Канал посвящён исключительно плагинам для ExteraGram и AyuGram. Обсуждаем разработку, API, фичи, баги и улучшения. Оффтоп, политика, флуд и реклама не по теме строго запрещены.
+                    <div class="rule-slang">
+                        Пишем только про плагины — код, баги, фичи. Всё остальное — мимо. Флудилки есть в другом месте.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">3</span>
+                    <span class="rule-title">Качество кода и документация</span>
+                </div>
+                <div class="rule-content">
+                    При публикации плагинов обязательно прикладывайте понятную документацию, README с инструкцией по установке и примерами. Код должен быть читаемым, структурированным и с комментариями.
+                    <div class="rule-slang">
+                        Выкладываешь плагин — сделай нормальный README, а то никто не врубится как юзать. Код пиши чисто, не спагетти.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">4</span>
+                    <span class="rule-title">Безопасность превыше всего</span>
+                </div>
+                <div class="rule-content">
+                    Запрещено публиковать вредоносный код, трояны, keyloggers, скрипты для кражи данных. Все плагины должны быть проверены на безопасность. При обнаружении подозрительного кода — немедленное удаление и бан.
+                    <div class="rule-slang">
+                        Палишь малварь — инста-бан без разговоров. Только легальные и безопасные решения, без крипто-стилеров.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">5</span>
+                    <span class="rule-title">Помощь новичкам</span>
+                </div>
+                <div class="rule-content">
+                    Будьте терпеливы к начинающим разработчикам. Если видите вопрос новичка — помогите, объясните, покажите примеры. Не токсичьте, если кто-то спрашивает "очевидные" вещи.
+                    <div class="rule-slang">
+                        Не гоняй нубов. Сегодня он нуб, завтра может быть топовым девом. Объясни нормально.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Technical -->
+        <div class="section" id="tech">
+            <div class="section-header">
+                <span class="section-number">02</span>
+                <h2 class="section-title">Технические рекомендации</h2>
+                <span class="section-icon">⚙️</span>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">6</span>
+                    <span class="rule-title">API и совместимость</span>
+                </div>
+                <div class="rule-content">
+                    Следите за обновлениями API ExteraGram и AyuGram. Тестируйте плагины на совместимость с последними версиями клиентов. Указывайте поддерживаемые версии в документации.
+                    <div class="rule-slang">
+                        Апдейтишь плагин под новую версию? Красава. Забил на обновления? Потом не удивляйся багам.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">7</span>
+                    <span class="rule-title">Производительность и оптимизация</span>
+                </div>
+                <div class="rule-content">
+                    Оптимизируйте код для минимального потребления ресурсов. Избегайте memory leaks, бесконечных циклов, тяжёлых операций в main thread. Плагин не должен тормозить клиент.
+                    <div class="rule-slang">
+                        Твой плагин жрёт RAM как не в себя? Фиксь это. Никто не хочет лагов. Оптимизация — наше всё.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">8</span>
+                    <span class="rule-title">Баг-репорты</span>
+                </div>
+                <div class="rule-content">
+                    При сообщении о багах указывайте: версию клиента, версию плагина, детальное описание, шаги воспроизведения, логи. Без этой информации разработчикам сложно помочь.
+                    <div class="rule-slang">
+                        Нашёл баг — напиши нормально: версия, что делал, где сломалось, логи скинь. А не "не работает, пофиксите".
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">9</span>
+                    <span class="rule-title">Code style и naming</span>
+                </div>
+                <div class="rule-content">
+                    Используйте понятные имена переменных и функций на английском. Следуйте code style conventions (camelCase для Java/Kotlin, snake_case для Python). Избегайте транслита.
+                    <div class="rule-slang">
+                        Называй переменные по-человечески, а не "asdasd". Читать будут другие люди.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">10</span>
+                    <span class="rule-title">Лицензии и авторство</span>
+                </div>
+                <div class="rule-content">
+                    Уважайте интеллектуальную собственность. Не публикуйте чужой код без разрешения. При использовании open-source соблюдайте лицензии. Указывайте авторство и ссылки.
+                    <div class="rule-slang">
+                        Спёр код? Укажи автора и лицензию. Не палишься как Code Thief. Копипаста без кредитов — стрёмно.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Culture -->
+        <div class="section" id="culture">
+            <div class="section-header">
+                <span class="section-number">03</span>
+                <h2 class="section-title">Культура общения</h2>
+                <span class="section-icon">💬</span>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">11</span>
+                    <span class="rule-title">Конструктивная критика</span>
+                </div>
+                <div class="rule-content">
+                    Критикуйте код, а не людей. Всегда предлагайте альтернативные решения или улучшения. Критика должна быть аргументированной и помогать автору стать лучше.
+                    <div class="rule-slang">
+                        Видишь говнокод? Скажи, что конкретно не так и как можно лучше. А не просто "фу бяка". Конструктив рулит.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">12</span>
+                    <span class="rule-title">Code review и PR</span>
+                </div>
+                <div class="rule-content">
+                    При участии в open-source оформляйте аккуратные PR с описанием изменений. В code review будьте вежливы, указывайте на проблемы тактично.
+                    <div class="rule-slang">
+                        Делаешь PR? Опиши, что поменял и зачем. Ревьюишь код? Говори по делу. Это коллаборация, а не war zone.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">13</span>
+                    <span class="rule-title">Обмен знаниями</span>
+                </div>
+                <div class="rule-content">
+                    Делитесь полезными ресурсами: туториалами, документацией, статьями, видео. Если нашли интересное решение — расскажите комьюнити. Создавайте гайды для частых вопросов.
+                    <div class="rule-slang">
+                        Нашёл крутой гайд? Поделись с чатом. Может кому пригодится. Knowledge sharing — наша сила.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">14</span>
+                    <span class="rule-title">Язык общения</span>
+                </div>
+                <div class="rule-content">
+                    Основной язык канала — русский, допустим английский для технических терминов и кода. Избегайте избыточного сленга, если это затрудняет понимание. Пишите грамотно.
+                    <div class="rule-slang">
+                        Русский или English — окей. Но если пишешь на смеси языков и кодовых словах — это не круто. Будь понятен.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">15</span>
+                    <span class="rule-title">Реклама и самопиар</span>
+                </div>
+                <div class="rule-content">
+                    Запрещена реклама сторонних каналов, ботов без согласования. Разрешён адекватный самопиар собственных плагинов с описанием. Спам караются баном.
+                    <div class="rule-slang">
+                        Рекламу кидаешь? Только по теме. Свой плагин запостить — ок, но с толковым описанием. Спам — на выход.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Forbidden -->
+        <div class="section" id="forbidden">
+            <div class="section-header">
+                <span class="section-number">04</span>
+                <h2 class="section-title">Запрещённый контент</h2>
+                <span class="section-icon">⛔</span>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">16</span>
+                    <span class="rule-title">Нелегальная активность</span>
+                </div>
+                <div class="rule-content">
+                    Строго запрещены плагины для: взлома аккаунтов, обхода 2FA, спам-рассылок, накрутки просмотров, парсинга личных данных без согласия, DDoS-атак и любой другой нелегальной активности.
+                    <div class="rule-slang">
+                        Всё, что связано со взломом, кражей данных, спамом — под хардовым баном. Мы за white-hat, а не за black-hat.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">17</span>
+                    <span class="rule-title">NSFW и оскорбительный контент</span>
+                </div>
+                <div class="rule-content">
+                    Запрещено размещение NSFW-контента, порнографии, насилия, шок-контента, экстремизма. Канал для профессионального и образовательного контента. За нарушение — моментальный бан.
+                    <div class="rule-slang">
+                        NSFW, gore и всякая дичь — это не сюда. Здесь профессиональное комьюнити, а не помойка.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">18</span>
+                    <span class="rule-title">Скам и мошенничество</span>
+                </div>
+                <div class="rule-content">
+                    Запрещены любые формы мошенничества: фишинг-ссылки, пирамиды, fake giveaways, платные "премиум" плагины которые не работают. Скамеры получают перманентный бан и попадают в чёрный список.
+                    <div class="rule-slang">
+                        Скамишь людей? Инста-бан + чёрный список. Никаких фейковых раздач и "заплати 100р за плагин" (копипаста из гитхаба).
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">19</span>
+                    <span class="rule-title">Токсичное поведение</span>
+                </div>
+                <div class="rule-content">
+                    Троллинг, flamewar'ы, преднамеренное провоцирование конфликтов не приветствуются. При systematic toxic behaviour — варнинги, муты, вплоть до бана. Держите тему в позитивном ключе.
+                    <div class="rule-slang">
+                        Троллишь? Устраиваешь холивары? Получишь варн, потом мут, потом бан. Тут для работы, а не для drama queens.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="rule-card">
+                <div class="rule-header">
+                    <span class="rule-num">20</span>
+                    <span class="rule-title">Тестирование перед релизом</span>
+                </div>
+                <div class="rule-content">
+                    Перед публикацией тестируйте плагин на разных сценариях. Проверяйте edge cases, граничные условия, обработку ошибок. Beta-версии помечайте соответствующим тегом.
+                    <div class="rule-slang">
+                        Не выкатывай в релиз то, что не прогнал. Потестил? Отлично. Нет? Не плачь, когда у юзеров всё рушится.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Notice -->
+        <div class="notice-card">
+            <div class="notice-header">
+                <span class="notice-icon">⚡</span>
+                <h3 class="notice-title">Важная информация</h3>
+            </div>
+            <div class="notice-content">
+                <p><strong>Санкции за нарушения:</strong> Первое нарушение — предупреждение. Повторное — временный мут на 24-48 часов. Систематические нарушения или грубые проступки (малварь, скам, NSFW) — перманентный бан без возможности апелляции.</p>
+                <p><strong>Апелляции:</strong> Если считаете бан несправедливым — пишите в личку администрации с аргументацией. Рассматриваем каждый случай индивидуально.</p>
+                <p><strong>Обновления правил:</strong> Правила могут дополняться и изменяться. Актуальная версия всегда доступна по этой ссылке. О критичных изменениях уведомляем в канале.</p>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            <div class="footer-title">Присоединяйтесь к экосистеме! 🚀</div>
+            <div class="footer-subtitle">Вместе мы создаём лучшие плагины для ExteraGram и AyuGram</div>
+            
+            <div class="footer-links">
+                <a href="https://t.me/rei_plugins" class="footer-link" target="_blank">
+                    📱 Telegram канал
+                </a>
+                <a href="https://t.me/rei_plugins" class="footer-link" target="_blank">
+                    💬 Telegram чат
+                </a>
+                <a href="https://github.com/rei_plugins" class="footer-link" target="_blank">
+                    🐙 GitHub
+                </a>
+                <a href="#" class="footer-link">
+                    📚 Документация
+                </a>
+            </div>
+            
+            <div class="footer-copyright">
+                © 2026 Rei Plugins Community • Made with ❤️ for developers
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Sidebar Toggle
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('overlay');
+            const navBar = document.getElementById('navBar');
+            
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+            navBar.classList.toggle('sidebar-open');
+        }
+        
+        function closeSidebar() {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('overlay').classList.remove('active');
+            document.getElementById('navBar').classList.remove('sidebar-open');
+        }
+        
+        function scrollToSection(id) {
+            closeSidebar();
+            const element = document.getElementById(id);
+            if (element) {
+                element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+        
+        // Update active menu item on scroll
+        window.addEventListener('scroll', () => {
+            const sections = ['intro', 'main', 'tech', 'culture', 'forbidden'];
+            const menuItems = document.querySelectorAll('.menu-item');
+            
+            let currentSection = '';
+            
+            sections.forEach(sectionId => {
+                const section = document.getElementById(sectionId);
+                if (section) {
+                    const rect = section.getBoundingClientRect();
+                    if (rect.top <= 100 && rect.bottom >= 100) {
+                        currentSection = sectionId;
+                    }
+                }
+            });
+            
+            menuItems.forEach((item, index) => {
+                item.classList.remove('active');
+                if (index === sections.indexOf(currentSection)) {
+                    item.classList.add('active');
+                }
+            });
+        });
+    </script>
+</body>
+</html>ml>
